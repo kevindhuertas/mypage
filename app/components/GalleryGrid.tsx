@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Masonry from "react-masonry-css";
 import CardItem from "./CardItem";
 import { GalleryItem } from "./GalleryPage";
 import Button from "./Button";
 import { useLang } from "../context/LanguageProvider";
-
+import Image from "next/image";
 const LESS_HEIGHT_CLASS = "h-[480px]";
 const DEFAULT_HEIGHT_CLASS = "h-[530px]";
 const EXTRA_HEIGHT_CLASS = "h-[560px]";
@@ -23,7 +23,8 @@ type GalleryGridProps = {
   onCardClick?: (id: string) => void;
 };
 
-type CategoryFilter = "all" | "work";
+// Añadido "photography"
+type CategoryFilter = "all" | "work" | "photography";
 
 const GalleryGrid: React.FC<GalleryGridProps> = ({
   cardData = [],
@@ -32,6 +33,13 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryFilter>("all");
   const { text, currentLanguage } = useLang();
+
+  // Control para disparar la animación de pop sólo al montar
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 20);
+    return () => clearTimeout(t);
+  }, []);
 
   if (!cardData || cardData.length === 0) {
     return (
@@ -49,7 +57,10 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
 
   const filteredData = cardData.filter((card) => {
     if (selectedCategory === "all") {
-      return true;
+      return card.categorie === "work" || card.categorie === "play";
+    }
+    if (selectedCategory === "photography") {
+      return card.categorie === "photography";
     }
     return card.categorie === selectedCategory;
   });
@@ -58,40 +69,44 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
     setSelectedCategory(category);
   };
 
-  const commonButtonClass = "px-8 py-2 text-sm font-medium";
-  const activeBgColor = "bg-gradient-to-r from-indigo-400 to-sky-400";
-
+  const commonButtonClass =
+    "px-8 py-2 text-sm font-medium transition-colors duration-200 ease-out inline-flex items-center justify-center";
+  // color plano azul cuando está activo (seleccionado)
+  const activeBgColor = "bg-blue-600";
   const activeTextColor = "text-white";
   const activeHoverBgColor = "bg-blue-700";
 
+  // INACTIVO: ahora gris para mejor contraste con borde pequeño azul
   const inactiveBgColor = "bg-gray-200 dark:bg-gray-700";
   const inactiveTextColor = "text-gray-700 dark:text-gray-300";
   const inactiveHoverBgColor = "bg-gray-300 dark:hover:bg-gray-600";
 
+  // Borde más pequeño (1px) azul para todos los botones
+  const borderClass = "border border-blue-400";
+
   return (
     <div>
-      <div className="flex justify-center space-x-4 mb-4">
-        <Button
-          onClick={() => handleFilterChange("all")}
-          className={commonButtonClass}
-          bgColor={selectedCategory === "all" ? activeBgColor : inactiveBgColor}
-          textColor={
-            selectedCategory === "all" ? activeTextColor : inactiveTextColor
-          }
-          hoverBgColor={
-            selectedCategory === "all"
-              ? activeHoverBgColor
-              : inactiveHoverBgColor
-          }
-          withBorder={false}
-          disableHoverAnimation={false}
-        >
-          {text.gallery.filters.all}
-        </Button>
+      {/* Estilos locales para la animación "pop" */}
+      <style>{`
+        @keyframes popBtn {
+          0% { transform: scale(1.08); opacity: 0.98; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .btn-pop {
+          animation: popBtn 320ms cubic-bezier(.2,.9,.2,1) forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .btn-pop { animation: none; transform: none; }
+        }
+      `}</style>
 
+      <div className="flex justify-center space-x-4 gap-1 md:gap-2 mb-4 flex-wrap">
+        {/* WORK */}
         <Button
           onClick={() => handleFilterChange("work")}
-          className={commonButtonClass}
+          className={`${commonButtonClass} ${borderClass} ${
+            mounted ? "btn-pop" : ""
+          }`}
           bgColor={
             selectedCategory === "work" ? activeBgColor : inactiveBgColor
           }
@@ -103,10 +118,55 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
               ? activeHoverBgColor
               : inactiveHoverBgColor
           }
-          withBorder={false}
+          withBorder={true}
           disableHoverAnimation={false}
         >
-          {text.gallery.filters.work}
+          {text?.gallery?.filters?.work ?? "Work"}
+        </Button>
+        {/* ALL */}
+        <Button
+          onClick={() => handleFilterChange("all")}
+          className={`${commonButtonClass} ${borderClass} ${
+            mounted ? "btn-pop" : ""
+          }`}
+          bgColor={selectedCategory === "all" ? activeBgColor : inactiveBgColor}
+          textColor={
+            selectedCategory === "all" ? activeTextColor : inactiveTextColor
+          }
+          hoverBgColor={
+            selectedCategory === "all"
+              ? activeHoverBgColor
+              : inactiveHoverBgColor
+          }
+          withBorder={true}
+          disableHoverAnimation={false}
+        >
+          {text?.gallery?.filters?.all ?? "All"}
+        </Button>
+
+        {/* PHOTOGRAPHY (nuevo) */}
+        <Button
+          onClick={() => handleFilterChange("photography")}
+          className={`${commonButtonClass} ${borderClass} ${
+            mounted ? "btn-pop" : ""
+          }`}
+          bgColor={
+            selectedCategory === "photography" ? activeBgColor : inactiveBgColor
+          }
+          textColor={
+            selectedCategory === "photography"
+              ? activeTextColor
+              : inactiveTextColor
+          }
+          hoverBgColor={
+            selectedCategory === "photography"
+              ? activeHoverBgColor
+              : inactiveHoverBgColor
+          }
+          withBorder={true}
+          disableHoverAnimation={false}
+        >
+          {text?.gallery?.filters?.photos ?? "Photos"}
         </Button>
       </div>
 
@@ -150,7 +210,7 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
         <p className="text-center text-neutral-400 mt-8">
           {text.gallery.noItemsInCategory.replace(
             "{category}",
-            selectedCategory
+            selectedCategory,
           )}
         </p>
       )}

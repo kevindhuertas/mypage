@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
-import { GalleryItem } from "./GalleryPage"; // Asegúrate que la ruta sea correcta
+import { FaGithub, FaExternalLinkAlt, FaHandPointer } from "react-icons/fa";
+import { GalleryItem } from "./GalleryPage";
 
 const IMAGE_ROTATION_FACTOR = 5;
 const IMAGE_SCALE_AMOUNT = 1.03;
@@ -48,12 +48,13 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
   cardClassName = "bg-gray-100 dark:bg-gray-100",
   imageStyle = "object-contain",
 }) => {
+  const showTapIndicator = true; // luego puedes cambiarlo a false si quieres
+
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [showInfo, setShowInfo] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
 
-  // --- Handlers PC ---
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (disableHoverAnimation || !cardRef.current || showInfo) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -61,39 +62,43 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
     const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     setMousePos({ x, y });
   };
+
   const handleMouseEnter = () => {
     if (!disableHoverAnimation && !showInfo) {
       setIsHovered(true);
     }
   };
+
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
-  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+
+  const handleCardClick = () => {
     if (showInfo) {
       setShowInfo(false);
       return;
     }
+
     if (info) {
       setShowInfo(true);
       setIsHovered(false);
     }
   };
+
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation();
   };
+
   const handleInfoCloseClick = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>
+    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
   ) => {
     e.stopPropagation();
     setShowInfo(false);
   };
-  const handleInfoContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-  };
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 600px)");
+
     if (mq.matches && cardRef.current) {
       const observer = new IntersectionObserver(
         (entries) => {
@@ -108,10 +113,11 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
         {
           root: null,
           rootMargin: "-50% 0px -50% 0px",
-        }
+        },
       );
 
       observer.observe(cardRef.current);
+
       return () => {
         observer.disconnect();
       };
@@ -119,6 +125,7 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
   }, []);
 
   const currentImageUrl = imageUrl || "/azuloscuro.jpg";
+
   const isGif =
     typeof currentImageUrl === "string" &&
     currentImageUrl.toLowerCase().endsWith(".gif");
@@ -126,14 +133,18 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
   const hoverScale = pushBackOnHover
     ? CARD_HOVER_SCALE_BACKWARD
     : CARD_HOVER_SCALE_FORWARD;
+
   const hoverTranslateZ = pushBackOnHover ? CARD_PUSH_BACK_AMOUNT_PX : 0;
+
   const hoverTranslateY = pushBackOnHover
     ? CARD_LIFT_AMOUNT_PX / 2
     : CARD_LIFT_AMOUNT_PX;
 
   const cardTransform =
     isHovered && !disableHoverAnimation && !showInfo
-      ? `translate3d(${mousePos.x * CARD_FOLLOW_FACTOR_PX}px, ${hoverTranslateY + mousePos.y * CARD_FOLLOW_FACTOR_PX}px, ${hoverTranslateZ}px) scale3d(${hoverScale}, ${hoverScale}, 1)`
+      ? `translate3d(${mousePos.x * CARD_FOLLOW_FACTOR_PX}px, ${
+          hoverTranslateY + mousePos.y * CARD_FOLLOW_FACTOR_PX
+        }px, ${hoverTranslateZ}px) scale3d(${hoverScale}, ${hoverScale}, 1)`
       : "translate3d(0px, 0px, 0px) scale3d(1, 1, 1)";
 
   const cardStyle = {
@@ -143,7 +154,9 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
 
   const imageWrapperTransform =
     isHovered && !disableHoverAnimation && !showInfo
-      ? `scale3d(${IMAGE_SCALE_AMOUNT}, ${IMAGE_SCALE_AMOUNT}, ${IMAGE_SCALE_AMOUNT}) rotateX(${-mousePos.y * IMAGE_ROTATION_FACTOR}deg) rotateY(${mousePos.x * IMAGE_ROTATION_FACTOR}deg)`
+      ? `scale3d(${IMAGE_SCALE_AMOUNT}, ${IMAGE_SCALE_AMOUNT}, ${IMAGE_SCALE_AMOUNT}) rotateX(${
+          -mousePos.y * IMAGE_ROTATION_FACTOR
+        }deg) rotateY(${mousePos.x * IMAGE_ROTATION_FACTOR}deg)`
       : "scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg)";
 
   const imageWrapperStyle = {
@@ -159,16 +172,29 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
     <div
       ref={cardRef}
       className={`relative border border-slate-100 dark:border-slate-600
-         group h-full flex flex-col overflow-hidden ${cardClassName} ${borderRadiusClass} ${!disableHoverAnimation ? "cursor-pointer" : ""}`}
+         group h-full flex flex-col overflow-hidden ${cardClassName} ${borderRadiusClass} ${
+           !disableHoverAnimation ? "cursor-pointer" : ""
+         }`}
       style={{ perspective: "1000px", ...cardStyle }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
       onClick={handleCardClick}
     >
-      {/* --- Imagen --- */}
+      {/* ICONO TAP */}
+      {info && showTapIndicator && (
+        <div className="absolute top-3 right-3 z-20 pointer-events-none">
+          <div className="w-10 h-10 rounded-full bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm flex items-center justify-center shadow-md opacity-50">
+            <FaHandPointer className="text-black dark:text-white text-sm" />
+          </div>
+        </div>
+      )}
+
+      {/* Imagen */}
       <div
-        className={`${imageContainerClasses} flex-grow ${showInfo ? "blur-sm" : ""} transition-all duration-300`}
+        className={`${imageContainerClasses} flex-grow ${
+          showInfo ? "blur-sm" : ""
+        } transition-all duration-300`}
       >
         <div style={imageWrapperStyle} className="absolute inset-0">
           <Image
@@ -182,12 +208,10 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
         </div>
       </div>
 
-      {/* --- Contenido Superpuesto (Título y Elementos Inferiores) --- */}
-
-      {/* Título como Mini-Tarjeta (Aparece en hover, no si info está visible) */}
+      {/* Título */}
       {title && !showInfo && (
         <div
-          className={`absolute top-4 left-4 transition-all duration-300 ease-in-out pointer-events-none ${
+          className={`absolute top-4 left-4 transition-all duration-300 pointer-events-none ${
             isHovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
           } z-[2]`}
         >
@@ -199,14 +223,13 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
         </div>
       )}
 
-      {/* --- Contenedor para Elementos Inferiores (Tecnologías y Barra Principal) --- */}
+      {/* CONTENIDO INFERIOR */}
       {!showInfo && (tecnologies || text || appUrl || gitUrl || year) && (
         <div
-          className={`absolute bottom-4 left-4 right-4 flex flex-col items-start gap-2 transition-all duration-300 ease-in-out pointer-events-none ${
+          className={`absolute bottom-4 left-4 right-4 flex flex-col items-start gap-2 transition-all duration-300 pointer-events-none ${
             isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
           } z-[2]`}
         >
-          {/* Tecnologías (si existen) */}
           {tecnologies && (
             <div className="bg-white dark:bg-neutral-800 px-2 py-1 rounded-md shadow-md pointer-events-auto">
               <p className="text-black dark:text-white text-xs font-medium">
@@ -215,54 +238,42 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
             </div>
           )}
 
-          {/* Barra Principal Inferior (Texto/Iconos + Año) */}
           {(text || appUrl || gitUrl || year) && (
             <div className="flex items-center gap-2 w-auto pointer-events-auto">
-              {" "}
-              {/* w-auto para que se ajuste al contenido */}
-              {/* Mini tarjeta con Texto e Iconos */}
               {(text || appUrl || gitUrl) && (
-                <div
-                  className={`inline-flex items-center space-x-3 bg-white dark:bg-neutral-800 px-3 py-1.5 rounded-md shadow-md`}
-                >
-                  {/* Texto con padding consistente */}
+                <div className="inline-flex items-center space-x-3 bg-white dark:bg-neutral-800 px-3 py-1.5 rounded-md shadow-md">
                   {text && (
-                    <p
-                      className={`text-black dark:text-white text-xs md:text-sm ${appUrl || gitUrl ? "border-r border-gray-300 dark:border-gray-600 pr-3" : ""}`}
-                    >
+                    <p className="text-black dark:text-white text-xs md:text-sm border-r border-gray-300 dark:border-gray-600 pr-3">
                       {text}
                     </p>
                   )}
-                  {/* Iconos (si existen) */}
+
                   {appUrl && (
                     <a
                       href={appUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={handleLinkClick}
-                      className="text-black dark:text-white hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                      aria-label="Visitar aplicación"
+                      className="text-black dark:text-white hover:text-blue-500 transition-colors"
                     >
-                      {" "}
-                      <FaExternalLinkAlt size={16} />{" "}
+                      <FaExternalLinkAlt size={16} />
                     </a>
                   )}
+
                   {gitUrl && (
                     <a
                       href={gitUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={handleLinkClick}
-                      className="text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition-colors"
-                      aria-label="Ver código fuente en GitHub"
+                      className="text-black dark:text-white hover:text-gray-500 transition-colors"
                     >
-                      {" "}
-                      <FaGithub size={16} />{" "}
+                      <FaGithub size={16} />
                     </a>
                   )}
                 </div>
               )}
-              {/* Año (al lado, si existe) */}
+
               {year && (
                 <span className="bg-white dark:bg-neutral-800 px-2 py-1 text-black dark:text-white text-xs md:text-sm rounded shadow-md">
                   {year}
@@ -273,7 +284,7 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
         </div>
       )}
 
-      {/* --- Overlay de Información con Blur (Sin cambios) --- */}
+      {/* INFO OVERLAY */}
       {info && (
         <div
           className={`absolute inset-0 z-30 flex items-center justify-center p-4 transition-opacity duration-300 ${
@@ -289,13 +300,12 @@ const CardItem: React.FC<CardItemProps & { pushBackOnHover?: boolean }> = ({
           >
             <button
               onClick={handleInfoCloseClick}
-              className="absolute top-2 right-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white text-2xl leading-none font-bold z-10"
-              aria-label="Cerrar información"
+              className="absolute top-2 right-2 text-2xl font-bold"
             >
-              {" "}
-              ×{" "}
+              ×
             </button>
-            <p className="text-sm whitespace-pre-wrap pr-6"> {info}</p>
+
+            <p className="text-sm whitespace-pre-wrap pr-6">{info}</p>
           </div>
         </div>
       )}

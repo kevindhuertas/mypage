@@ -7,7 +7,7 @@ export type GalleryItem = {
   id: string;
 
   year: string;
-  categorie: "work" | "play";
+  categorie: "work" | "play" | "photography";
   imageUrl: string;
   appUrl?: string;
   gitUrl?: string;
@@ -124,7 +124,7 @@ const galleryItemsData: GalleryItem[] = [
       es: {
         title: "Ing. Software Móvil | Pickup Jobs",
         text: "Desarrollo de App Flutter (Cliente/Admin)",
-        info: "• Desarrollo de apps cliente y administrador en Flutter (Android/iOS) desde MVP hasta versión funcional.\n• Implementación de Firebase (Storage, Notificaciones, Auth con Google/Apple).\n• Integración de Stripe para pagos.\n• Uso de Trello, GitHub, Figma y herramientas de Apple Development.",
+        info: "• Desarrollo de apps cliente y administrador en Flutter (Android/iOS) Since MVP hasta versión funcional.\n• Implementación de Firebase (Storage, Notificaciones, Auth con Google/Apple).\n• Integración de Stripe para pagos.\n• Uso de Trello, GitHub, Figma y herramientas de Apple Development.",
         tecnologies: "Flutter | Firebase | Stripe | Dart",
       },
       en: {
@@ -199,10 +199,34 @@ const galleryItemsData: GalleryItem[] = [
     },
   },
   {
-    id: "item-5",
-    year: "Desde 2021",
+    id: "item-5-1",
+    year: "10/2025–01/2026",
     categorie: "work",
-    imageUrl: "/me/mineria2.JPG",
+    imageUrl: "/projects/asitecno.jpg",
+    imageStyle: "object-cover",
+    isExtraHeight: true,
+    translations: {
+      es: {
+        title: "Assistant Project Manager - Asitecno Cia Ltda.",
+        text: "Gestión de proyecto de digitalización documental",
+        info: "Apoyo en la gestión de un proyecto de digitalización y organización de documentos para la Universidad de las Artes de Guayaquil. Coordinación de un equipo de 10 personas, asistiendo en la planificación, asignación de tareas y ejecución del proyecto hasta su cierre. Optimización de flujos de trabajo, seguimiento del progreso, elaboración de reportes y presentaciones, y resolución de problemas para asegurar la entrega a tiempo.",
+        tecnologies:
+          "Gestión de Proyectos | Digitalización | Organización Documental",
+      },
+      en: {
+        title: "Assistant Project Manager - Asitecno Cia Ltda.",
+        text: "Document digitization project management",
+        info: "Supported the management of a document digitization and organization project for the University of Arts of Guayaquil. Coordinated a team of 10 people, assisting with planning, task assignment, and project execution through closure. Optimized workflows, tracked progress, prepared reports and presentations, and supported problem-solving to ensure on-time delivery.",
+        tecnologies:
+          "Project Management | Document Digitization | Workflow Optimization",
+      },
+    },
+  },
+  {
+    id: "item-5",
+    year: "Since 2021",
+    categorie: "work",
+    imageUrl: "/me/mineria2.webp",
     imageStyle: "object-cover",
     isExtraHeight: true,
     translations: {
@@ -217,6 +241,29 @@ const galleryItemsData: GalleryItem[] = [
         text: "Rig design and management",
         info: "Personal cryptocurrency mining project with an approximate investment of $20k. Included design, configuration, hardware selection, and maintenance to optimize mining.",
         tecnologies: "Hardware | Mining",
+      },
+    },
+  },
+  {
+    id: "item-5-3",
+    year: "Since 07/2025",
+    categorie: "work",
+    imageUrl: "/projects/puntovisas.gif",
+    imageStyle: "object-contain p-1 md:p-6 rounded-sm",
+    isExtraHeight: false,
+    translations: {
+      es: {
+        title: "Puntovisas.com",
+        text: "Fundador & Desarrollador",
+        info: "Plataforma web para gestionar y adelantar citas de entrevista de visa en la embajada de Estados Unidos. Sistema automatizado para monitorear disponibilidad y reprogramar instantáneamente citas a fechas más tempranas. Implementado con backend en Python (Flask) con procesos en segundo plano y frontend en React. La versión MVP generó más de $250 en ventas iniciales.",
+        tecnologies:
+          "Python | Flask | React | Automatización | Web Development",
+      },
+      en: {
+        title: "Puntovisas.com",
+        text: "Founder & Developer",
+        info: "Web platform for managing and advancing U.S. embassy visa interview appointments. Automated system that monitors availability and instantly reschedules earlier appointment slots. Built with a Python (Flask) backend with background processes and a React frontend. The MVP version generated over $250 in early sales.",
+        tecnologies: "Python | Flask | React | Automation | Web Development",
       },
     },
   },
@@ -243,6 +290,30 @@ const galleryItemsData: GalleryItem[] = [
         text: "Google Cloud vs Azure Performance",
         info: "Comparative analysis of network latency and bandwidth using servers hosted on Google Cloud and Azure, with a React interface.",
         tecnologies: "React | MUI",
+      },
+    },
+  },
+  {
+    id: "item-5-4",
+    year: "08/2025",
+    categorie: "work",
+    imageUrl: "/projects/publication.png",
+    imageStyle: "object-contain p-2 md:p-8 rounded-lg",
+    isExtraHeight: true,
+    translations: {
+      es: {
+        title:
+          "Application of Transformer Models for Volcano Seismic Signals Classification",
+        text: "Publicación científica - ColCACI 2025",
+        info: "Publicación científica sobre la aplicación de modelos Transformer para la clasificación de señales sísmicas volcánicas. El trabajo propone SigTR-Net, un enfoque basado en deep learning para mejorar la identificación y clasificación de señales sísmicas asociadas a actividad volcánica.",
+        tecnologies: "Transformers | Deep Learning | Seismic Signal Processing",
+      },
+      en: {
+        title:
+          "Application of Transformer Models for Volcano Seismic Signals Classification",
+        text: "Scientific publication - ColCACI 2025",
+        info: "Scientific publication on the application of Transformer models for the classification of volcanic seismic signals. The work introduces SigTR-Net, a deep learning–based approach to improve the identification and classification of seismic signals related to volcanic activity.",
+        tecnologies: "Transformers | Deep Learning | Seismic Signal Processing",
       },
     },
   },
@@ -334,6 +405,25 @@ const aboutMe: GalleryItem[] = [
     },
   },
 ];
+const photos: GalleryItem[] = Array.from({ length: 24 }, (_, i) => {
+  const num = i + 1;
+  return {
+    id: `photo-${num}`,
+    year: "",
+    categorie: "photography",
+    imageUrl: `/photos/foto ${num}.JPG`,
+    imageStyle: "object-cover",
+    isExtraHeight: true,
+    translations: {
+      es: {
+        title: "",
+      },
+      en: {
+        title: "",
+      },
+    },
+  };
+});
 
 const GalleryPage: React.FC<ShowcasePageProps> = (props) => {
   const handleCardClick = (cardIdentifier: string) => {};
@@ -341,7 +431,7 @@ const GalleryPage: React.FC<ShowcasePageProps> = (props) => {
     <main className="w-full relative pt-3 z-10 mb-0">
       <div className="rounded-t-2xl rounded-b-3xl">
         <GalleryGrid
-          cardData={galleryItemsData}
+          cardData={[...galleryItemsData, ...photos]}
           onCardClick={handleCardClick}
         />
       </div>

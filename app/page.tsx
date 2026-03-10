@@ -43,6 +43,31 @@ const Home = () => {
     setIsAboutMeCardOpen((prev) => !prev);
   };
 
+  useEffect(() => {
+    const cursor = document.createElement("div");
+    cursor.classList.add("custom-cursor");
+    document.body.appendChild(cursor);
+
+    const moveCursor = (e: any) => {
+      cursor.style.left = e.clientX + "px";
+      cursor.style.top = e.clientY + "px";
+    };
+
+    const addHover = () => cursor.classList.add("cursor-hover");
+    const removeHover = () => cursor.classList.remove("cursor-hover");
+
+    document.addEventListener("mousemove", moveCursor);
+
+    document.querySelectorAll("a, button").forEach((el) => {
+      el.addEventListener("mouseenter", addHover);
+      el.addEventListener("mouseleave", removeHover);
+    });
+
+    return () => {
+      document.removeEventListener("mousemove", moveCursor);
+    };
+  }, []);
+
   return (
     <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col items-center overflow-x-hidden">
       <Header />

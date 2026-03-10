@@ -12,12 +12,13 @@ const TRANSLATIONS = {
       availability: "Still available for new projects",
       iAm: "I am",
       viewProjects: "View Projects",
-      aboutMe: "About Me",
+      aboutMe: "Me & CV",
     },
     gallery: {
       filters: {
         all: "All",
         work: "Work",
+        photos: "Photos",
       },
       noItemsInCategory: 'No items found in category "{category}".',
       noItemsOverall: "No items to display.",
@@ -65,12 +66,13 @@ const TRANSLATIONS = {
       availability: "Todavía disponible para nuevos proyectos",
       iAm: "Soy",
       viewProjects: "Ver Proyectos",
-      aboutMe: "Sobre Mí",
+      aboutMe: "Yo & CV",
     },
     gallery: {
       filters: {
         all: "Todos",
         work: "Work",
+        photos: "Fotos",
       },
       noItemsInCategory: 'No hay elementos en la categoría "{category}".',
       noItemsOverall: "No hay elementos para mostrar.",
